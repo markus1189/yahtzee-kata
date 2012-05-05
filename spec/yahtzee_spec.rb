@@ -35,4 +35,14 @@ describe Yahtzee do
     end
   end
 
+  context "scoring three of a kind" do
+    it "should score the sum of the three numbers" do
+      Yahtzee['three of a kind', [6,6,6,1,2] ].should == 18
+    end
+
+    it "should score 0 if there are no three of a kind" do
+      Yahtzee['three of a kind', [1,6,6,1,2] ].should == 0
+    end
+  end
+
 end

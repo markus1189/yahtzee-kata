@@ -32,6 +32,9 @@ class DiceRoll
     when /^two pair$/
       pairs = @dice.partition { |num| @dice.count(num) >= 2 }.first
       if pairs.size == 4 then pairs.inject(&:+) else 0 end
+    when /^three of a kind$/
+      return 0 unless @dice.any? { |num| @dice.count(num) == 3 }
+      @dice.max_by { |num| @dice.count num } * 3
     else
       fail "Unknown category: '#{category}'"
     end
