@@ -9,7 +9,8 @@ end
 class DiceRoll
 
   def initialize(*dice)
-    @dice = dice.flatten
+    @dice = dice.flatten.sort
+
     @categories = {
       ones:   1,
       twos:   2,
@@ -18,11 +19,19 @@ class DiceRoll
       fives:  5,
       sixes:  6
     }
+
   end
 
   def score category
-    number = @categories[category.to_sym]
-    @dice.count(number) * number
+    case category
+    when /^ones$/, /^twos$/, /^threes$/, /^fours$/, /^fives$/, /^sixes$/
+      number = @categories.fetch(category.to_sym)
+      @dice.count(number) * number
+    when /^pair$/
+      @dice.partition { |num| @dice.count(num) >= 2 }.first.max * 2
+    else
+      fail "Unknown category: '#{category}'"
+    end
   end
 end
 
