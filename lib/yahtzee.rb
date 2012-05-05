@@ -28,7 +28,7 @@ class DiceRoll
       number = @categories.fetch(category.to_sym)
       @dice.count(number) * number
     when /^pair$/
-      @dice.partition { |num| @dice.count(num) >= 2 }.first.max * 2
+      ( @dice.partition { |num| @dice.count(num) >= 2 }.first.max || 0 ) * 2
     else
       fail "Unknown category: '#{category}'"
     end
