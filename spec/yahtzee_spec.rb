@@ -45,4 +45,14 @@ describe Yahtzee do
     end
   end
 
+  context "scoring four of a kind" do
+    it "should score 4 times the number" do
+      Yahtzee['four of a kind', [1,4,4,4,4] ].should == 4*4
+    end
+
+    it "should score 0 if there is no 'four of a kind'" do
+      Yahtzee['four of a kind', [1,4,4,2,4] ].should == 0
+    end
+  end
+
 end

@@ -28,16 +28,38 @@ class DiceRoll
       number = @categories.fetch(category.to_sym)
       @dice.count(number) * number
     when /^pair$/
-      ( @dice.partition { |num| @dice.count(num) >= 2 }.first.max || 0 ) * 2
+      return 0 unless pair?
+      @dice.partition { |num| @dice.count(num) >= 2 }.first.max * 2
     when /^two pair$/
       pairs = @dice.partition { |num| @dice.count(num) >= 2 }.first
       if pairs.size == 4 then pairs.inject(&:+) else 0 end
     when /^three of a kind$/
-      return 0 unless @dice.any? { |num| @dice.count(num) == 3 }
+      return 0 unless three?
       @dice.max_by { |num| @dice.count num } * 3
+    when /^four of a kind$/
+      return 0 unless four?
+      @dice.partition { |num| @dice.count(num) == 4 }.first.inject(:+)
     else
       fail "Unknown category: '#{category}'"
     end
+  end
+
+  def pair?
+    sequence_of? 2
+  end
+
+  def three?
+    sequence_of? 3
+  end
+
+  def four?
+    sequence_of? 4
+  end
+
+  private
+
+  def sequence_of? number
+    @dice.any? { |num| @dice.count(num) == number }
   end
 end
 
