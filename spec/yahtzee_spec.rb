@@ -21,4 +21,18 @@ describe Yahtzee do
     end
   end
 
+  context "scoring two pairs" do
+    it "should score both" do
+      Yahtzee['two pair', [1,1,2,3,3] ].should == 8
+    end
+
+    it "should score 0 if there is only one pair" do
+      Yahtzee['two pair', [5,5,1,2,3] ].should == 0
+    end
+
+    it "should score 0 if there is no pair" do
+      Yahtzee['two pair', [6,1,4,5,3] ].should == 0
+    end
+  end
+
 end

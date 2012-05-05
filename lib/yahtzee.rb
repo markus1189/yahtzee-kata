@@ -29,6 +29,9 @@ class DiceRoll
       @dice.count(number) * number
     when /^pair$/
       ( @dice.partition { |num| @dice.count(num) >= 2 }.first.max || 0 ) * 2
+    when /^two pair$/
+      pairs = @dice.partition { |num| @dice.count(num) >= 2 }.first
+      if pairs.size == 4 then pairs.inject(&:+) else 0 end
     else
       fail "Unknown category: '#{category}'"
     end
