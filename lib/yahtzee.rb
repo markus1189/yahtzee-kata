@@ -40,12 +40,10 @@ class DiceRoll
       return 0 unless four?
       @dice.partition { |num| @dice.count(num) == 4 }.first.inject(:+)
     when /^small straight$/
-      dice = @dice.sort
-      return 0 unless dice.uniq.size == 5 && [dice.min, dice.max] == [1,5]
+      return 0 unless straight? && [min,max] == [1,5]
       15
     when /^large straight$/
-      dice = @dice.sort
-      return 0 unless dice.uniq.size == 5 && [dice.min, dice.max] == [2,6]
+      return 0 unless straight? && [min,max] == [2,6]
       20
     else
       fail "Unknown category: '#{category}'"
@@ -62,6 +60,18 @@ class DiceRoll
 
   def four?
     sequence_of? 4
+  end
+
+  def straight?
+    @dice.uniq.size == @dice.size
+  end
+
+  def min
+    @dice.min
+  end
+
+  def max
+    @dice.max
   end
 
   private
