@@ -45,6 +45,14 @@ class DiceRoll
     when /^large straight$/
       return 0 unless straight? && [min,max] == [2,6]
       20
+    when /^full house$/
+      return 0 unless full_house?
+      @dice.inject(&:+)
+    when /^yahtzee$/
+      return 0 unless @dice.uniq.size == 1
+      50
+    when /^chance$/
+      @dice.inject(&:+)
     else
       fail "Unknown category: '#{category}'"
     end
@@ -64,6 +72,12 @@ class DiceRoll
 
   def straight?
     @dice.uniq.size == @dice.size
+  end
+
+  def full_house?
+    three_of_a_kind = @dice.any? { |x| @dice.count(x) == 3 }
+    pair            = @dice.any? { |x| @dice.count(x) == 2 }
+    three_of_a_kind && pair
   end
 
   def min

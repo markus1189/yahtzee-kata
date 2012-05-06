@@ -76,4 +76,30 @@ describe Yahtzee do
     end
   end
 
+  context "scoring a full house" do
+    it "should score the sum of the dice" do
+      Yahtzee['full house', [1,1,1,6,6] ].should == 15
+    end
+
+    it "should score 0 if there is no full house" do
+      Yahtzee['full house', [5,1,1,6,6] ].should == 0
+      Yahtzee['full house', [3,3,3,3,3] ].should == 0
+    end
+  end
+
+  context "scoring yahtzee" do
+    it "should score 50" do
+      Yahtzee['yahtzee', [4,4,4,4,4] ].should == 50
+    end
+
+    it "should score 0 if there is no yahtzee" do
+      Yahtzee['yahtzee', [5,2,2,2,2] ].should == 0
+    end
+  end
+
+  context "scoring change" do
+    it "should score the sum of the dice" do
+      Yahtzee['chance', [1,4,4,2,1] ].should == 12
+    end
+  end
 end
