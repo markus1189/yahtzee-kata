@@ -1,6 +1,6 @@
 class Yahtzee
-  def initialize dice_roll
-    @dice_roll = dice_roll
+  def initialize *dice
+    @dice_roll = DiceRoll.new dice.flatten
   end
 
   def method_missing meth, *args, &blk
@@ -13,17 +13,18 @@ class Yahtzee
 
   class << self
     def [] *dice
-      new DiceRoll.new(dice.flatten)
+      new *dice
     end
   end
 end
 
 class DiceRoll
+  class ScoringError < StandardError; end
 
   def initialize *dice
     @dice = dice.flatten.sort
 
-    @categories = {
+    @categories_to_num = {
       ones:   1,
       twos:   2,
       threes: 3,
@@ -35,7 +36,7 @@ class DiceRoll
   end
 
   def score_numbered category
-    number = @categories.fetch(category.to_sym)
+    number = @categories_to_num.fetch(category.to_sym)
     @dice.count(number) * number
   end
 
@@ -47,14 +48,26 @@ class DiceRoll
     candidate * 2
   end
 
+  def score_pair!
+    not_zero_or_exception { score_pair }
+  end
+
   def score_two_pairs
-    first  = score_pair
-    second = score_pair
-    if second == 0 then 0 else first + second end
+    score_pair! + score_pair!
+  rescue ScoringError
+    0
   end
 
   def score_three_of_a_kind
     x_of_a_kind(3)
+  end
+
+  def score_three_of_a_kind
+    x_of_a_kind(3)
+  end
+
+  def score_three_of_a_kind!
+    not_zero_or_exception { score_three_of_a_kind }
   end
 
   def score_four_of_a_kind
@@ -70,8 +83,9 @@ class DiceRoll
   end
 
   def score_full_house
-    return 0 unless full_house?
-    @dice.inject(&:+)
+    score_pair! + score_three_of_a_kind!
+  rescue ScoringError
+    0
   end
 
   def score_yahtzee
@@ -87,22 +101,8 @@ class DiceRoll
     sequence_of? 2
   end
 
-  def three?
-    sequence_of? 3
-  end
-
-  def four?
-    sequence_of? 4
-  end
-
   def straight?
     @dice.uniq.size == @dice.size
-  end
-
-  def full_house?
-    three_of_a_kind = @dice.any? { |x| @dice.count(x) == 3 }
-    pair            = @dice.any? { |x| @dice.count(x) == 2 }
-    three_of_a_kind && pair
   end
 
   def min
@@ -119,12 +119,16 @@ class DiceRoll
 
   private
 
+  def not_zero_or_exception &blk
+    result = yield
+    result != 0 ? result : fail(ScoringError)
+  end
+
   def score_straight(type)
     max = if type == :small then 5 else 6 end
     return 0 unless straight? && self.max == max
     ((max-4)..max).inject(&:+)
   end
-
 
   def x_of_a_kind(x)
     return 0 unless sequence_of? x
