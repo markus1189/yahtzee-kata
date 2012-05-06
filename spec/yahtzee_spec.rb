@@ -55,4 +55,25 @@ describe Yahtzee do
     end
   end
 
+  context "scoring a small straight" do
+    it "should score 15" do
+      Yahtzee['small straight', [1,2,3,4,5] ].should == 15
+    end
+
+    it "should score 0 if the dice are not a small straight" do
+      Yahtzee['small straight', [1,2,3,4,6] ].should == 0
+    end
+  end
+
+  context "scoring a large straight" do
+    it "should score 15" do
+      Yahtzee['large straight', [2,3,4,5,6] ].should == 20
+    end
+
+    it "should score 0 if the dice are not a large straight" do
+      Yahtzee['large straight', [1,2,3,4,5] ].should == 0
+      Yahtzee['large straight', [6,2,3,4,6] ].should == 0
+    end
+  end
+
 end

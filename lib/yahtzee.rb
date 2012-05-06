@@ -39,6 +39,14 @@ class DiceRoll
     when /^four of a kind$/
       return 0 unless four?
       @dice.partition { |num| @dice.count(num) == 4 }.first.inject(:+)
+    when /^small straight$/
+      dice = @dice.sort
+      return 0 unless dice.uniq.size == 5 && [dice.min, dice.max] == [1,5]
+      15
+    when /^large straight$/
+      dice = @dice.sort
+      return 0 unless dice.uniq.size == 5 && [dice.min, dice.max] == [2,6]
+      20
     else
       fail "Unknown category: '#{category}'"
     end
